@@ -1,13 +1,10 @@
-using System.Collections.Generic;
-
-
 namespace RingHash
 {
-    public interface IConsistentHash<in TNode>
+    public interface IConsistentHash<TNode>
     {
         uint ReplicasCount { get; }
         void AddNode(TNode node);
-        int GetShardForKey(string key);
+        TNode GetShardForKey(string key);
         void RemoveNode(TNode node);
     }
 }

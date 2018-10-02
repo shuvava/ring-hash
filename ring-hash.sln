@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingHash", "src\RingHash\RingHash.csproj", "{96620E56-74A1-4A21-9DC6-721D39DD94DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FF17986D-32EC-4382-A8AB-F12744B011D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RingHashUnitTest", "tests\RingHashUnitTest\RingHashUnitTest.csproj", "{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96620E56-74A1-4A21-9DC6-721D39DD94DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96620E56-74A1-4A21-9DC6-721D39DD94DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96620E56-74A1-4A21-9DC6-721D39DD94DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96620E56-74A1-4A21-9DC6-721D39DD94DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2E833F7D-C6B2-4E63-92DA-DFF1AC3766C7} = {FF17986D-32EC-4382-A8AB-F12744B011D1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C5AA5A5-05B9-4281-B4F2-E2B99A310A9E}
+	EndGlobalSection
+EndGlobal

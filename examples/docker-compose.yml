@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2017-CU11-ubuntu
+    container_name: ring-hash.sql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd!
+    ports:
+      - 1433:1433
+    networks:
+      - back-end
+  producer:
+    image: producer
+    container_name: ring-hash.producer
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    ports:
+      - "8080:80"
+    depends_on:
+      - db

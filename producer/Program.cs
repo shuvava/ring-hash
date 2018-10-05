@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -23,8 +22,17 @@ namespace producer
 
             var srv = _config.ServiceProvider.GetRequiredService<ICommand>();
             var count = 10;
-            await srv.Run(count).ConfigureAwait(false);
-            Console.WriteLine("Records added");
+            while (count > 0)
+            {
+                var excResult = await srv.Run(count).ConfigureAwait(false);
+                Console.WriteLine($"{excResult} records added");
+                Console.WriteLine("Do you want add more?");
+                var result = Console.ReadLine();
+                if (!int.TryParse(result, out count)){
+                    count = 0;
+                }
+
+            }
             //Console.ReadKey();
         }
 

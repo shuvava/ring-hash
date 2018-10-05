@@ -4,6 +4,6 @@ namespace producer
 {
     public interface ICommand
     {
-        Task Run(int count);
+        Task<int> Run(int count);
     }
 }

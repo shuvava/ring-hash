@@ -17,7 +17,7 @@ namespace producer
             _random = new Random();
         }
 
-        public async Task Run(int count)
+        public Task<int> Run(int count)
         {
             var items = new List<Event>();
             foreach (var i in Enumerable.Range(1, count))
@@ -34,7 +34,7 @@ namespace producer
                 items.Add(model);
             }
 
-            await _repository.PutItemsAsync(items).ConfigureAwait(false);
+            return _repository.PutItemsAsync(items);
         }
     }
 }

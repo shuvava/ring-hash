@@ -53,7 +53,7 @@ GO
 if not exists (select * from sysobjects where name='Workers' and xtype='U')
 BEGIN
     CREATE TABLE dbo.Workers (
-        [id] [int] PRIMARY KEY,
+        [Id] [int] PRIMARY KEY,
         [LastCheckpointTime] [datetime] NOT NULL,
         [Description] [nvarchar](150) NULL
     )
@@ -67,6 +67,76 @@ BEGIN
         [WorkerId] [int] NOT NULL,
         [ThreadCheckpoint] [datetime] NOT NULL
     )
+END
+GO
+
+IF (OBJECT_ID('Workers_Put') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[Workers_Put] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+
+ALTER PROCEDURE [dbo].Workers_Put(
+    @Id int,
+    @Description nvarchar(150)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+	UPDATE dbo.Workers
+		SET [Description] = @Description
+	WHERE 
+		[Id] = @Id
+	IF @@ROWCOUNT = 0 
+	BEGIN	
+		INSERT INTO dbo.Workers ([Id], [LastCheckpointTime], [Description])
+		values (@Id, GETUTCDATE(), @Description)
+	END
+END
+GO
+
+IF (OBJECT_ID('Workers_Checkpoint') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[Workers_Checkpoint] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+
+ALTER PROCEDURE [dbo].Workers_Checkpoint(
+	@Id int
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+	UPDATE dbo.Workers
+		SET [LastCheckpointTime] = GETUTCDATE()
+	WHERE	
+		[Id] = @Id
+END
+GO
+
+IF (OBJECT_ID('Workers_Get') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[Workers_Get] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+-- =============================================
+-- Author:		Name
+-- Create date:
+-- Description:
+-- =============================================
+ALTER PROCEDURE [dbo].[Workers_Get]
+    -- Add the parameters for the stored procedure here
+    @dt datetime = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        [Id]
+      , [LastCheckpointTime]
+      , [Description]
+    FROM [EventsStore].[dbo].[Workers] WITH(NOLOCK)
+    WHERE
+		[LastCheckpointTime] >@dt
 END
 GO
 

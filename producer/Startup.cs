@@ -12,19 +12,16 @@ namespace producer
 {
     public class Startup
     {
-
-        public ServiceProvider ServiceProvider { get; }
-        public IConfiguration Configuration { get; }
-
         public Startup(string[] args)
         {
             if (args == null)
             {
                 args = new string[0];
             }
+
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", true, true)
                 .AddEnvironmentVariables()
                 .AddCommandLine(args)
                 .Build();
@@ -40,6 +37,10 @@ namespace producer
         }
 
 
+        public ServiceProvider ServiceProvider { get; }
+        public IConfiguration Configuration { get; }
+
+
         public void ConfigureServices(IServiceCollection services)
         {
             services
@@ -50,6 +51,7 @@ namespace producer
                         .AddConsole();
                 })
                 .AddOptions();
+
             // register config
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
             // register repositories

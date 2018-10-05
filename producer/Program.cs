@@ -22,18 +22,24 @@ namespace producer
 
             var srv = _config.ServiceProvider.GetRequiredService<ICommand>();
             var count = 10;
+
             while (count > 0)
             {
                 var excResult = await srv.Run(count).ConfigureAwait(false);
                 Console.WriteLine($"{excResult} records added");
                 Console.WriteLine("Do you want add more?");
                 var result = Console.ReadLine();
-                if (!int.TryParse(result, out count)){
-                    count = 0;
+
+                if (string.IsNullOrEmpty(result))
+                {
+                    continue;
                 }
 
+                if (!int.TryParse(result, out count))
+                {
+                    count = 0;
+                }
             }
-            //Console.ReadKey();
         }
 
 

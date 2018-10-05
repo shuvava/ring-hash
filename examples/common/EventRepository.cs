@@ -14,10 +14,10 @@ using Microsoft.Extensions.Options;
 
 namespace common
 {
-    public class EventRepository: IEventRepository
+    public class EventRepository : IEventRepository
     {
-        private readonly ILogger _logger;
         private readonly ConnectionStrings _connectionStrings;
+        private readonly ILogger _logger;
 
 
         public EventRepository(
@@ -27,13 +27,17 @@ namespace common
             _logger = logger;
             _connectionStrings = connectionStrings.Value;
         }
+
+
         public async Task<IEnumerable<Event>> GetItemsAsync(DateTime starTime, int mask)
         {
             var parameters = new DynamicParameters();
             parameters.Add("dt", starTime);
+
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
+
                 return await connection.QueryAsync<Event>(
                         "[dbo].[Events_Get]",
                         commandType: CommandType.StoredProcedure,
@@ -51,10 +55,12 @@ namespace common
                 {
                     CommandType = CommandType.StoredProcedure
                 };
+
                 command.Parameters.AddWithValue("@events", DataTableUtill.MapListToDataTable(items));
 
                 await connection.OpenAsync().ConfigureAwait(false);
-                return (int)await command.ExecuteScalarAsync().ConfigureAwait(false);
+
+                return (int) await command.ExecuteScalarAsync().ConfigureAwait(false);
             }
         }
     }

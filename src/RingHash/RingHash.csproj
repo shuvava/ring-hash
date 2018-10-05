@@ -17,4 +17,7 @@
     <PackageReference Include="murmur3" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="INode.cs" />
+  </ItemGroup>
 </Project>

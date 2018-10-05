@@ -10,9 +10,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-if not exists (select *
-from sysobjects
-where name='EventStore' and xtype='U')
+
+if not exists (select * from sysobjects where name='EventStore' and xtype='U')
 BEGIN
 
     CREATE TABLE [dbo].[EventStore]
@@ -35,27 +34,40 @@ BEGIN
         ONLINE = OFF,
         ALLOW_ROW_LOCKS = ON,
         ALLOW_PAGE_LOCKS = ON)
+
+    CREATE TYPE [dbo].[EventStoreTableType] AS TABLE(
+        [CreateTime] [datetime] NOT NULL,
+        [Id] [int] NOT NULL,
+        [EventTime] [datetime] NOT NULL,
+        [UserId] [int] NOT NULL,
+        [TransactionId] [int] NOT NULL,
+        [EventData] [nvarchar](4000) NOT NULL
+            PRIMARY KEY CLUSTERED
+    (
+        [CreateTime] ASC
+    )WITH (IGNORE_DUP_KEY = OFF)
+    )
 END
 GO
 
-
-/****** Object:  Index [IX_EventStore]    Script Date: 10/4/2018 7:02:51 PM ******/
+if not exists (select * from sysobjects where name='Workers' and xtype='U')
+BEGIN
+    CREATE TABLE dbo.Workers (
+        [id] [int] PRIMARY KEY,
+        [LastCheckpointTime] [datetime] NOT NULL,
+        [Description] [nvarchar](150) NULL
+    )
+END
 GO
 
-
-
-CREATE TYPE [dbo].[EventStoreTableType] AS TABLE(
-    [CreateTime] [datetime] NOT NULL,
-    [Id] [int] NOT NULL,
-    [EventTime] [datetime] NOT NULL,
-    [UserId] [int] NOT NULL,
-    [TransactionId] [int] NOT NULL,
-    [EventData] [nvarchar](4000) NOT NULL
-        PRIMARY KEY CLUSTERED
-(
-	[CreateTime] ASC
-)WITH (IGNORE_DUP_KEY = OFF)
-)
+if not exists (select * from sysobjects where name='EventThread' and xtype='U')
+BEGIN
+    CREATE TABLE dbo.EventThread (
+        [Hash] [int] PRIMARY KEY,
+        [WorkerId] [int] NOT NULL,
+        [ThreadCheckpoint] [datetime] NOT NULL
+    )
+END
 GO
 
 IF (OBJECT_ID('Events_Get') IS NULL)

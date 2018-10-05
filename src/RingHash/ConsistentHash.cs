@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RingHash
 {
-    public class ConsistentHash<TNode> : IConsistentHash<TNode> where TNode : INode
+    public class ConsistentHash<TNode> : IConsistentHash<TNode>
     {
         private const uint DefaultRingReplicas = 16;
 
@@ -21,7 +21,7 @@ namespace RingHash
         {
             _hashFunction = hashFunction;
             ReplicasCount = replicasCount;
-            //TODO: [vs] make it Concurent Dictionary 
+            //TODO: [vs] make it Concurent Dictionary
             _nodes = new Dictionary<uint, TNode>();
             _nodesMap = new Dictionary<uint, uint>();
             RingHashes = new List<uint>();

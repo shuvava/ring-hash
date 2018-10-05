@@ -1,6 +1,9 @@
 using System;
 using System.Threading.Tasks;
 
+using common;
+using common.Models;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,15 +29,15 @@ namespace worker
                         config.AddCommandLine(args);
                     }
                 })
-                .ConfigureServices((hostContext, services) =>
+                .ConfigureServices((context, services) =>
                 {
                     services.AddOptions();
-                    //services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
+                    services.Configure<ConnectionStrings>(context.Configuration.GetSection("ConnectionStrings"));
 
-                    //services.AddSingleton<IHostedService, PrintTextToConsoleService>();
+                    services.AddSingleton<IEventRepository, EventRepository>();
                 })
-                .ConfigureLogging((hostingContext, logging) => {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                .ConfigureLogging((context, logging) => {
+                    logging.AddConfiguration(context.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                 });
             await builder.RunConsoleAsync();

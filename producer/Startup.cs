@@ -53,7 +53,8 @@ namespace producer
             // register config
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
             // register repositories
-            services.AddSingleton<IEventRerpository, EventRerpository>();
+            services.AddSingleton<IEventRepository, EventRepository>();
+            services.AddSingleton<ICommand, Command>();
         }
 
 

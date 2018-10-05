@@ -14,20 +14,20 @@ using Microsoft.Extensions.Options;
 
 namespace common
 {
-    public class EventRerpository: IEventRerpository
+    public class EventRepository: IEventRepository
     {
         private readonly ILogger _logger;
         private readonly ConnectionStrings _connectionStrings;
 
 
-        public EventRerpository(
-            ILogger<EventRerpository> logger,
+        public EventRepository(
+            ILogger<EventRepository> logger,
             IOptions<ConnectionStrings> connectionStrings)
         {
             _logger = logger;
             _connectionStrings = connectionStrings.Value;
         }
-        public async Task<IEnumerable<Event>> GetItems(DateTime starTime, int mask)
+        public async Task<IEnumerable<Event>> GetItemsAsync(DateTime starTime, int mask)
         {
             var parameters = new DynamicParameters();
             parameters.Add("dt", starTime);
@@ -43,7 +43,7 @@ namespace common
         }
 
 
-        public async Task<int> PutItems(IEnumerable<Event> items)
+        public async Task<int> PutItemsAsync(IEnumerable<Event> items)
         {
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {

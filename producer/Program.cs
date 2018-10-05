@@ -21,8 +21,11 @@ namespace producer
             _logger = _config.ServiceProvider.GetRequiredService<ILogger<Program>>();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 
-            _logger.LogInformation(_config.Configuration.GetConnectionString("DefaultConnection"));
-            Console.ReadKey();
+            var srv = _config.ServiceProvider.GetRequiredService<ICommand>();
+            var count = 10;
+            await srv.Run(count).ConfigureAwait(false);
+            Console.WriteLine("Records added");
+            //Console.ReadKey();
         }
 
 

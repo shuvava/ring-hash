@@ -24,4 +24,7 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\examples\common\common.csproj" />
+  </ItemGroup>
 </Project>

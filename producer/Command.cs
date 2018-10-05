@@ -26,7 +26,7 @@ namespace producer
                 {
                     CreateTime = DateTime.UtcNow.AddMilliseconds(-_random.Next()),
                     EventData = Guid.NewGuid().ToString(),
-                    EventTime = DateTime.UtcNow.AddSeconds(-_random.Next()),
+                    EventTime = DateTime.UtcNow.AddMilliseconds(-_random.Next()),
                    Id = _random.Next(),
                     TransactionId = _random.Next(),
                     UserId = _random.Next()

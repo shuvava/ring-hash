@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: mcr.microsoft.com/mssql/server:2017-CU11-ubuntu
+    image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: ring-hash.sql
     environment:
       - ACCEPT_EULA=Y

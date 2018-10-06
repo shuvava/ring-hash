@@ -1,19 +1,13 @@
-using System.Collections.Generic;
-
-using common.Models;
-
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 
 namespace worker
 {
-    public class WorkerRunner : IWorkerRunner
+    public class WorkerRunner: IWorkerRunner
     {
-        private readonly IReadOnlyList<Node> _workers;
-        public WorkerRunner(
-            IOptions<List<Node>> workers)
+        public Task StartAsync()
         {
-            _workers = workers;
+            throw new System.NotImplementedException();
         }
     }
 }

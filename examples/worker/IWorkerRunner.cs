@@ -6,6 +6,5 @@ namespace worker
     public interface IWorkerRunner
     {
         Task StartAsync();
-        Task StopAsync();
     }
 }

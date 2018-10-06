@@ -34,11 +34,12 @@ namespace worker
                 {
                     services.AddOptions();
                     services.Configure<ConnectionStrings>(context.Configuration.GetSection("ConnectionStrings"));
-                    services.Configure<List<Node>>(context.Configuration.GetSection("Workers"));
+                    services.Configure<Node>(context.Configuration.GetSection("Worker"));
 
                     services.AddSingleton<IEventRepository, EventRepository>();
                     services.AddSingleton<IWorkerRepository, WorkerRepository>();
                     services.AddSingleton<IEventThreadRepository, EventThreadRepository>();
+                    services.AddHostedService<WorkerService>();
                 })
                 .ConfigureLogging((context, logging) => {
                     logging.AddConfiguration(context.Configuration.GetSection("Logging"));

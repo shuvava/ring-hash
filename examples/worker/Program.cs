@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using common;
@@ -33,8 +34,11 @@ namespace worker
                 {
                     services.AddOptions();
                     services.Configure<ConnectionStrings>(context.Configuration.GetSection("ConnectionStrings"));
+                    services.Configure<List<Node>>(context.Configuration.GetSection("Workers"));
 
                     services.AddSingleton<IEventRepository, EventRepository>();
+                    services.AddSingleton<IWorkerRepository, WorkerRepository>();
+                    services.AddSingleton<IEventThreadRepository, EventThreadRepository>();
                 })
                 .ConfigureLogging((context, logging) => {
                     logging.AddConfiguration(context.Configuration.GetSection("Logging"));

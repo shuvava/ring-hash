@@ -8,7 +8,6 @@ using common.Models;
 
 using Dapper;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 
@@ -17,14 +16,11 @@ namespace common
     public class EventRepository : IEventRepository
     {
         private readonly ConnectionStrings _connectionStrings;
-        private readonly ILogger _logger;
 
 
         public EventRepository(
-            ILogger<EventRepository> logger,
             IOptions<ConnectionStrings> connectionStrings)
         {
-            _logger = logger;
             _connectionStrings = connectionStrings.Value;
         }
 

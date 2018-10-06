@@ -1,47 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using System.IO;
+
+using common;
+using common.Models;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+
 
 namespace producer
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(string[] args)
         {
-            Configuration = configuration;
+            if (args == null)
+            {
+                args = new string[0];
+            }
+
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args)
+                .Build();
+
+            //setup our DI
+            var serviceProvider = new ServiceCollection();
+            ConfigureServices(serviceProvider);
+
+
+            ServiceProvider = serviceProvider.BuildServiceProvider();
+
+            Configure();
         }
 
+
+        public ServiceProvider ServiceProvider { get; }
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+                .AddLogging(builder =>
+                {
+                    builder
+                        .AddConfiguration(Configuration.GetSection("Logging"))
+                        .AddConsole();
+                })
+                .AddOptions();
+
+            // register config
+            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
+            // register repositories
+            services.AddSingleton<IEventRepository, EventRepository>();
+            services.AddSingleton<ICommand, Command>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
+        public void Configure()
+        {
+            //ServiceProvider
+            //    .GetService<ILoggerFactory>()
+            //    .AddConsole(LogLevel.Debug);
         }
     }
 }

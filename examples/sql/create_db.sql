@@ -70,6 +70,74 @@ BEGIN
 END
 GO
 
+IF (OBJECT_ID('EventThread_Checkpoint') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[EventThread_Checkpoint] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+
+ALTER PROCEDURE [dbo].EventThread_Checkpoint(
+    @hash int,
+	@workerId int,
+	@threadCheckpoint [datetime]
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+	UPDATE dbo.EventThread
+		SET [ThreadCheckpoint] = @threadCheckpoint
+	FROM dbo.EventThread WITH(NOLOCK)
+	WHERE
+		[Hash] = @hash AND
+		[WorkerId] = @workerId AND
+		[ThreadCheckpoint]< @threadCheckpoint;
+	SELECT @@ROWCOUNT
+END
+GO
+
+IF (OBJECT_ID('EventThread_Update') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[EventThread_Update] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+
+ALTER PROCEDURE [dbo].EventThread_Update(
+    @hash int,
+	@oldWorkerId int,
+	@newWorkerId int
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+	UPDATE dbo.EventThread
+		SET [WorkerId] = @newWorkerId
+	FROM dbo.EventThread WITH(NOLOCK)
+	WHERE
+		[Hash] = @hash AND
+		[WorkerId] = @oldWorkerId;
+	SELECT @@ROWCOUNT
+END
+GO
+
+IF (OBJECT_ID('EventThread_Get') IS NULL)
+BEGIN
+    exec('CREATE PROCEDURE [dbo].[EventThread_Get] AS BEGIN SET NOCOUNT ON; END')
+END
+GO
+
+ALTER PROCEDURE [dbo].EventThread_Get(
+    @hash int
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+	SELECT [Hash], [WorkerId], [ThreadCheckpoint]
+	FROM dbo.EventThread WITH(NOLOCK)
+	WHERE
+		[Hash] = @hash
+END
+GO
+
 IF (OBJECT_ID('Workers_Put') IS NULL)
 BEGIN
     exec('CREATE PROCEDURE [dbo].[Workers_Put] AS BEGIN SET NOCOUNT ON; END')

@@ -5,7 +5,7 @@ using System.Data;
 
 namespace common
 {
-    public static class DataTableUtill
+    public static class DataTableUtils
     {
         /// <summary>
         /// Map object to DataTable

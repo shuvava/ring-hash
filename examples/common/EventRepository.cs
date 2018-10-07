@@ -52,7 +52,7 @@ namespace common
                     CommandType = CommandType.StoredProcedure
                 };
 
-                command.Parameters.AddWithValue("@events", DataTableUtill.MapListToDataTable(items));
+                command.Parameters.AddWithValue("@events", DataTableUtils.MapListToDataTable(items));
 
                 await connection.OpenAsync().ConfigureAwait(false);
 

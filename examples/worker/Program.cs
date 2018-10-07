@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using common;
 using common.Models;
 
+using murmur;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+using RingHash;
 
 
 namespace worker
@@ -36,6 +40,7 @@ namespace worker
                     services.Configure<ConnectionStrings>(context.Configuration.GetSection("ConnectionStrings"));
                     services.Configure<Node>(context.Configuration.GetSection("Worker"));
 
+                    services.AddSingleton<IConsistentHash<Node>>(new ConsistentHash<Node>(new Murmur32()));
                     services.AddSingleton<IEventRepository, EventRepository>();
                     services.AddSingleton<IWorkerRepository, WorkerRepository>();
                     services.AddSingleton<IEventThreadRepository, EventThreadRepository>();

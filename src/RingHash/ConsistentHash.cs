@@ -21,7 +21,7 @@ namespace RingHash
         {
             _hashFunction = hashFunction;
             ReplicasCount = replicasCount;
-            //TODO: [vs] make it Concurent Dictionary
+            //TODO: [vs] make it Concurrent Dictionary
             _nodes = new Dictionary<uint, TNode>();
             _nodesMap = new Dictionary<uint, uint>();
             RingHashes = new List<uint>();
@@ -55,6 +55,19 @@ namespace RingHash
             }
 
             _ringHashArray = RingHashes.OrderBy(i => i).ToArray();
+        }
+
+
+        public bool ContainsNode(TNode node)
+        {
+            var nodeHash = GetHash(node.ToString());
+            return _nodes.ContainsKey(nodeHash);
+        }
+
+
+        public IEnumerable<TNode> GetNodes()
+        {
+            return _nodes.Values.ToList();
         }
 
 

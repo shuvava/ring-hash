@@ -1,14 +1,13 @@
-using RingHash;
-
-
 namespace RingHashUnitTest
 {
-    public class Node : INode
+    public class Node
     {
         public Node(int value)
         {
             Value = value;
         }
+
+
         public int Value { get; }
 
 

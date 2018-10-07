@@ -234,7 +234,8 @@ BEGIN
       , [EventData]
     FROM [EventsStore].[dbo].[EventStore] WITH(NOLOCK)
     WHERE
-	CreateTime >@dt
+	CreateTime >@dt AND
+	CHECKSUM([UserId]) % 1024 = @filter
 END
 GO
 
@@ -249,7 +250,6 @@ ALTER PROCEDURE [dbo].[EventStore_Put]
 AS
 BEGIN
     SET NOCOUNT ON;
-
     INSERT INTO [dbo].[EventStore]
         ([CreateTime]
         ,[Id]

@@ -29,6 +29,7 @@ namespace common
         {
             var parameters = new DynamicParameters();
             parameters.Add("dt", starTime);
+            parameters.Add("filter", mask);
 
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {

@@ -40,7 +40,7 @@ namespace worker
                     services.Configure<ConnectionStrings>(context.Configuration.GetSection("ConnectionStrings"));
                     services.Configure<Node>(context.Configuration.GetSection("Worker"));
 
-                    services.AddSingleton<IConsistentHash<Node>>(new ConsistentHash<Node>(new Murmur32()));
+                    services.AddSingleton<IConsistentHash<Node>>(new ConsistentHash<Node>(new Murmur32(), 1));
                     services.AddSingleton<IEventRepository, EventRepository>();
                     services.AddSingleton<IWorkerRepository, WorkerRepository>();
                     services.AddSingleton<IEventThreadRepository, EventThreadRepository>();

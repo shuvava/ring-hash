@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 
@@ -11,5 +12,6 @@ namespace RingHash
         IEnumerable<TNode> GetNodes();
         TNode GetShardForKey(string key);
         void RemoveNode(TNode node);
+        IEnumerable<Tuple<uint, uint>> GetNodeKeyRange(TNode node);
     }
 }

@@ -20,6 +20,12 @@ namespace RingHash
         public ConsistentHash(HashAlgorithm hashFunction, uint replicasCount = DefaultRingReplicas)
         {
             _hashFunction = hashFunction;
+
+            if (replicasCount < 1)
+            {
+                replicasCount = 1;
+            }
+
             ReplicasCount = replicasCount;
             //TODO: [vs] make it Concurrent Dictionary
             _nodes = new Dictionary<uint, TNode>();
@@ -61,6 +67,7 @@ namespace RingHash
         public bool ContainsNode(TNode node)
         {
             var nodeHash = GetHash(node.ToString());
+
             return _nodes.ContainsKey(nodeHash);
         }
 
@@ -99,6 +106,37 @@ namespace RingHash
             }
 
             _nodes.Remove(nodeHash);
+        }
+
+
+        public IEnumerable<Tuple<uint, uint>> GetNodeKeyRange(TNode node)
+        {
+            var nodeHash = GetHash(node.ToString());
+
+            if (!_nodes.ContainsKey(nodeHash))
+            {
+                return Enumerable.Empty<Tuple<uint, uint>>();
+            }
+
+            var replicasHashes = GetReplicasHashes(node);
+            var result = new List<Tuple<uint, uint>>();
+
+            foreach (var hash in replicasHashes)
+            {
+                var nextHash = GetNextShard(hash);
+
+                if (nextHash > hash)
+                {
+                    result.Add(new Tuple<uint, uint>(hash + 1, nextHash));
+                }
+                else
+                {
+                    result.Add(new Tuple<uint, uint>(hash + 1, uint.MaxValue));
+                    result.Add(new Tuple<uint, uint>(uint.MinValue, nextHash));
+                }
+            }
+
+            return result;
         }
 
 

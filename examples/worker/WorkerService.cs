@@ -25,6 +25,7 @@ namespace worker
         private Timer _timerThreadLocker;
         private Timer _timer;
         private readonly Node _settings;
+        private int _looker;
 
         public WorkerService(
             IConsistentHash<Node> hash,
@@ -54,7 +55,24 @@ namespace worker
 
         private async Task DoWork()
         {
-            _logger.LogInformation("Timed Background Service is working.");
+            try
+            {
+                if (_looker == 0)
+                {
+                    return;
+                }
+
+                Interlocked.Exchange(ref _looker, 1);
+
+                _logger.LogInformation("Timed Background Service is working.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unknown exception");
+            }
+            Interlocked.Exchange(ref _looker, 0);
+
         }
 
         private async Task SetLock()

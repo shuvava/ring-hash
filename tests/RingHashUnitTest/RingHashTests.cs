@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 
 using RingHash;
@@ -18,6 +19,25 @@ namespace RingHashUnitTest
 
         private readonly HashAlgorithm _hashFuncMoq;
 
+
+        [Fact]
+        public void GetNextShard_SimpleTwoShardTest()
+        {
+            // arrange
+            var rHash = new ConsistentHash<Node>(_hashFuncMoq, 1);
+            var first = new Node(3);
+            var second = new Node(6);
+            var nodes = new List<Node> { first, second };
+            rHash.AddNodes(nodes);
+            // act
+            var shard1 = rHash.GetShardHashForHash(rHash.Nodes.Keys.First());
+            var node1 = rHash.Nodes[shard1];
+            var shard2 = rHash.GetShardHashForHash(rHash.Nodes.Keys.Skip(1).First());
+            var node2 = rHash.Nodes[shard2];
+            // assert
+            Assert.Equal(second, node1);
+            Assert.Equal(first, node2);
+        }
 
         [Fact]
         public void GetNextShard_hash_in_the_middle_shard()

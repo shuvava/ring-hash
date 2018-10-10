@@ -42,13 +42,13 @@ namespace RingHash
         public uint ReplicasCount { get; }
 
 
-        public void AddNode(TNode node)
+        public bool AddNode(TNode node)
         {
             var nodeHash = GetHash(node.ToString());
 
             if (_nodes.ContainsKey(nodeHash))
             {
-                return;
+                return false;
             }
 
             var replicasHashes = GetReplicasHashes(node);
@@ -61,6 +61,8 @@ namespace RingHash
             }
 
             _ringHashArray = RingHashes.OrderBy(i => i).ToArray();
+
+            return true;
         }
 
 

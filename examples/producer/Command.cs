@@ -30,7 +30,7 @@ namespace producer
             {
                 var model = new Event
                 {
-                    CreateTime = DateTime.UtcNow.AddMilliseconds(-_random.Next()),
+                    CreateTime = DateTime.UtcNow.AddMilliseconds(-_random.Next(10)),
                     EventData = Guid.NewGuid().ToString(),
                     EventTime = DateTime.UtcNow.AddMilliseconds(-_random.Next()),
                     Id = _random.Next(),

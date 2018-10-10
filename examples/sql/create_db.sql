@@ -44,7 +44,8 @@ BEGIN
         [EventData] [nvarchar](4000) NOT NULL
             PRIMARY KEY CLUSTERED
     (
-        [CreateTime] ASC
+        [CreateTime] ASC,
+		[Id]
     )WITH (IGNORE_DUP_KEY = OFF)
     )
 END
@@ -84,6 +85,7 @@ ALTER PROCEDURE [dbo].EventThread_Checkpoint(
 AS
 BEGIN
     SET NOCOUNT ON;
+	declare @count int 
 	UPDATE dbo.EventThread
 		SET [ThreadCheckpoint] = @threadCheckpoint
 	FROM dbo.EventThread WITH(NOLOCK)
@@ -91,7 +93,18 @@ BEGIN
 		[Hash] = @hash AND
 		[WorkerId] = @workerId AND
 		[ThreadCheckpoint]< @threadCheckpoint;
-	SELECT @@ROWCOUNT
+	set @count =@@ROWCOUNT
+	if @count = 0 
+	BEGIN
+		if NOT EXISTS(select top 1 1 from dbo.EventThread WITH(NOLOCK) WHERE [Hash] = @hash)
+		BEGIN
+			 INSERT dbo.EventThread ([Hash], [WorkerId], [ThreadCheckpoint])
+			 VALUES (@hash, @workerId, @threadCheckpoint)
+			 set @count =@@ROWCOUNT
+		END
+	END
+
+	SELECT @count
 END
 GO
 
@@ -234,8 +247,8 @@ BEGIN
       , [EventData]
     FROM [EventsStore].[dbo].[EventStore] WITH(NOLOCK)
     WHERE
-	CreateTime >@dt AND
-	CHECKSUM([UserId]) % 1024 = @filter
+	CreateTime >@dt 
+	AND CHECKSUM([UserId]) % 1024 = @filter
 END
 GO
 

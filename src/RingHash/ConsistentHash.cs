@@ -88,26 +88,32 @@ namespace RingHash
         }
 
 
-        public void RemoveNode(TNode node)
+        public bool RemoveNode(TNode node)
         {
             var nodeHash = GetHash(node.ToString());
 
             if (!_nodes.ContainsKey(nodeHash))
             {
-                return;
+                return false;
             }
 
             var replicasHashes = GetReplicasHashes(node);
 
             foreach (var replicas in replicasHashes)
             {
-                if (_nodesMap.ContainsKey(replicas))
+                if (!_nodesMap.ContainsKey(replicas))
                 {
-                    _nodesMap.Remove(replicas);
+                    continue;
                 }
+
+                _nodesMap.Remove(replicas);
+                RingHashes.Remove(replicas);
             }
 
             _nodes.Remove(nodeHash);
+            _ringHashArray = RingHashes.OrderBy(i => i).ToArray();
+
+            return true;
         }
 
 

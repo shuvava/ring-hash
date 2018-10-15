@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -47,7 +48,8 @@ namespace common
             var parameters = new DynamicParameters();
             parameters.Add("hash", item.Hash);
             parameters.Add("workerId", item.WorkerId);
-            parameters.Add("threadCheckpoint", item.ThreadCheckpoint);
+            parameters.Add("Checkpoint", item.Checkpoint);
+            parameters.Add("LockExpirationTime", item.LockExpirationTime);
 
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {
@@ -64,12 +66,13 @@ namespace common
         }
 
 
-        public async Task<bool> ChangeThreadOwnerAsync(int hash, int oldWorkerId, int newWorkerId)
+        public async Task<bool> ChangeThreadOwnerAsync(int hash, int oldWorkerId, int newWorkerId, DateTime lockExpirationTime)
         {
             var parameters = new DynamicParameters();
             parameters.Add("hash", hash);
             parameters.Add("oldWorkerId", oldWorkerId);
             parameters.Add("newWorkerId", newWorkerId);
+            parameters.Add("LockExpirationTime", lockExpirationTime);
 
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {

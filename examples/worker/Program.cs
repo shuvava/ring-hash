@@ -44,7 +44,8 @@ namespace worker
                     services.AddSingleton<IEventRepository, EventRepository>();
                     services.AddSingleton<IWorkerRepository, WorkerRepository>();
                     services.AddSingleton<IEventThreadRepository, EventThreadRepository>();
-                    services.AddHostedService<WorkerService>();
+                    //services.AddHostedService<TimerWorkerService>();
+                    services.AddHostedService<ReactiveWorkerService>();
                 })
                 .ConfigureLogging((context, logging) => {
                     logging.AddConfiguration(context.Configuration.GetSection("Logging"));

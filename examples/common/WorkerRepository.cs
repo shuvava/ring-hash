@@ -27,17 +27,13 @@ namespace common
 
         public async Task<IEnumerable<Node>> GetWorkersAsync()
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("dt", DateTime.UtcNow.AddSeconds(-3 * 60));
-
             using (var connection = new SqlConnection(_connectionStrings.DefaultConnection))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
                 return await connection.QueryAsync<Node>(
                         "[dbo].[Workers_Get]",
-                        commandType: CommandType.StoredProcedure,
-                        param: parameters)
+                        commandType: CommandType.StoredProcedure)
                     .ConfigureAwait(false);
             }
         }
@@ -47,6 +43,7 @@ namespace common
         {
             var parameters = new DynamicParameters();
             parameters.Add("Id", item.Id);
+            parameters.Add("LockExpirationTime", item.LockExpirationTime);
             parameters.Add("Description", item.Description);
 
             using (var db = new SqlConnection(_connectionStrings.DefaultConnection))
@@ -64,6 +61,7 @@ namespace common
         {
             var parameters = new DynamicParameters();
             parameters.Add("Id", item.Id);
+            parameters.Add("LockExpirationTime", item.LockExpirationTime);
 
             using (var db = new SqlConnection(_connectionStrings.DefaultConnection))
             {

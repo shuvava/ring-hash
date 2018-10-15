@@ -11,7 +11,7 @@ namespace RingHash
         bool ContainsNode(TNode node);
         IEnumerable<TNode> GetNodes();
         TNode GetShardForKey(string key);
-        void RemoveNode(TNode node);
+        bool RemoveNode(TNode node);
         IEnumerable<Tuple<uint, uint>> GetNodeKeyRange(TNode node);
     }
 }

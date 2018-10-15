@@ -55,7 +55,7 @@ if not exists (select * from sysobjects where name='Workers' and xtype='U')
 BEGIN
     CREATE TABLE dbo.Workers (
         [Id] [int] PRIMARY KEY,
-        [LastCheckpointTime] [datetime] NOT NULL,
+		[LockExpirationTime] [datetime] NOT NULL,
         [Description] [nvarchar](150) NULL
     )
 END
@@ -66,7 +66,8 @@ BEGIN
     CREATE TABLE dbo.EventThread (
         [Hash] [int] PRIMARY KEY,
         [WorkerId] [int] NOT NULL,
-        [ThreadCheckpoint] [datetime] NOT NULL
+        [Checkpoint] [datetime] NOT NULL,
+		[LockExpirationTime] [datetime] NOT NULL
     )
 END
 GO
@@ -80,27 +81,34 @@ GO
 ALTER PROCEDURE [dbo].EventThread_Checkpoint(
     @hash int,
 	@workerId int,
-	@threadCheckpoint [datetime]
+	@Checkpoint [datetime],
+	@LockExpirationTime [datetime]
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 	declare @count int 
 	UPDATE dbo.EventThread
-		SET [ThreadCheckpoint] = @threadCheckpoint
-	FROM dbo.EventThread WITH(NOLOCK)
+		SET [Checkpoint] = @Checkpoint, 
+		[LockExpirationTime] = @LockExpirationTime
 	WHERE
 		[Hash] = @hash AND
 		[WorkerId] = @workerId AND
-		[ThreadCheckpoint]< @threadCheckpoint;
+		[Checkpoint]<= @Checkpoint;
 	set @count =@@ROWCOUNT
 	if @count = 0 
 	BEGIN
 		if NOT EXISTS(select top 1 1 from dbo.EventThread WITH(NOLOCK) WHERE [Hash] = @hash)
 		BEGIN
-			 INSERT dbo.EventThread ([Hash], [WorkerId], [ThreadCheckpoint])
-			 VALUES (@hash, @workerId, @threadCheckpoint)
+			 INSERT dbo.EventThread ([Hash], [WorkerId], [Checkpoint], [LockExpirationTime])
+			 VALUES (@hash, @workerId, @Checkpoint, @LockExpirationTime)
 			 set @count =@@ROWCOUNT
+		END ELSE BEGIN
+			UPDATE dbo.EventThread
+				SET [LockExpirationTime] = @LockExpirationTime
+			WHERE
+				[Hash] = @hash AND
+				[WorkerId] = @workerId
 		END
 	END
 
@@ -117,14 +125,15 @@ GO
 ALTER PROCEDURE [dbo].EventThread_Update(
     @hash int,
 	@oldWorkerId int,
-	@newWorkerId int
+	@newWorkerId int,
+	@LockExpirationTime [datetime]
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 	UPDATE dbo.EventThread
-		SET [WorkerId] = @newWorkerId
-	FROM dbo.EventThread WITH(NOLOCK)
+		SET [WorkerId] = @newWorkerId, 
+		[LockExpirationTime] = @LockExpirationTime
 	WHERE
 		[Hash] = @hash AND
 		[WorkerId] = @oldWorkerId;
@@ -144,7 +153,7 @@ ALTER PROCEDURE [dbo].EventThread_Get(
 AS
 BEGIN
     SET NOCOUNT ON;
-	SELECT [Hash], [WorkerId], [ThreadCheckpoint]
+	SELECT [Hash], [WorkerId], [Checkpoint], [LockExpirationTime]
 	FROM dbo.EventThread WITH(NOLOCK)
 	WHERE
 		[Hash] = @hash
@@ -159,19 +168,21 @@ GO
 
 ALTER PROCEDURE [dbo].Workers_Put(
     @Id int,
-    @Description nvarchar(150)
+    @Description nvarchar(150),
+	@LockExpirationTime [datetime]
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 	UPDATE dbo.Workers
-		SET [Description] = @Description
+		SET [Description] = @Description,
+		[LockExpirationTime] = @LockExpirationTime
 	WHERE 
 		[Id] = @Id
 	IF @@ROWCOUNT = 0 
 	BEGIN	
-		INSERT INTO dbo.Workers ([Id], [LastCheckpointTime], [Description])
-		values (@Id, GETUTCDATE(), @Description)
+		INSERT INTO dbo.Workers ([Id], [LockExpirationTime], [Description])
+		values (@Id, @LockExpirationTime, @Description)
 	END
 END
 GO
@@ -183,13 +194,14 @@ END
 GO
 
 ALTER PROCEDURE [dbo].Workers_Checkpoint(
-	@Id int
+	@Id int,
+	@LockExpirationTime [datetime]
 )
 AS
 BEGIN
     SET NOCOUNT ON;
 	UPDATE dbo.Workers
-		SET [LastCheckpointTime] = GETUTCDATE()
+		SET [LockExpirationTime] = @LockExpirationTime
 	WHERE	
 		[Id] = @Id
 END
@@ -200,24 +212,17 @@ BEGIN
     exec('CREATE PROCEDURE [dbo].[Workers_Get] AS BEGIN SET NOCOUNT ON; END')
 END
 GO
--- =============================================
--- Author:		Name
--- Create date:
--- Description:
--- =============================================
 ALTER PROCEDURE [dbo].[Workers_Get]
-    -- Add the parameters for the stored procedure here
-    @dt datetime = 0
 AS
 BEGIN
     SET NOCOUNT ON;
     SELECT 
         [Id]
-      , [LastCheckpointTime]
+	  , [LockExpirationTime]
       , [Description]
     FROM [EventsStore].[dbo].[Workers] WITH(NOLOCK)
     WHERE
-		[LastCheckpointTime] >@dt
+		[LockExpirationTime] > GETUTCDATE()
 END
 GO
 
@@ -238,7 +243,7 @@ ALTER PROCEDURE [dbo].[Events_Get]
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT TOP (1000)
+    SELECT TOP (10000)
         [CreateTime]
       , [Id]
       , [EventTime]
@@ -248,7 +253,8 @@ BEGIN
     FROM [EventsStore].[dbo].[EventStore] WITH(NOLOCK)
     WHERE
 	CreateTime >@dt 
-	AND CHECKSUM([UserId]) % 1024 = @filter
+	--AND CHECKSUM([UserId]) % 1024 = @filter
+	AND [UserId] % 1024 = @filter
 END
 GO
 

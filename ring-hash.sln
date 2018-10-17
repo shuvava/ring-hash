@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B6DA5CD4-07C8-4CC7-BF61-FE98EF7ECBE1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "producer", "examples\producer\producer.csproj", "{177A12DF-3024-4F89-BE01-6579CEE56F82}"

@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>shuvava</Authors>
+    <Copyright>shuvava</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/shuvava/ring-hash/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/shuvava/ring-hash</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/shuvava/ring-hash.git</RepositoryUrl>
+    <PackageTags>ringhash ring-hash consistent hash</PackageTags>
+    <Description>implementation of consistent hash based on ring hash</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,10 +20,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\RingHash\Release</OutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="murmur3" Version="1.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="INode.cs" />

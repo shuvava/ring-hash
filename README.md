@@ -67,7 +67,7 @@ Commonly, a hash function will map a value into a 32-bit key, 0~2^<sup>32</sup>-
 
 Now consider four objects: object1~object4. We use a hash function to get their key values and map them into the circle, as illustrated in figure 2.
 
-![Figure2](./docs/Figure2.jpg "Figure2")
+![Figure2](./docs/figure2.jpg "Figure2")
 
 ```js
 hash(object1) = key1;
